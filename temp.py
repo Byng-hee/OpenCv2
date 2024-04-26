@@ -1,74 +1,44 @@
 import cv2 as cv
 import sys
-import os
-import shutil
 
+img = cv.imread('soccer.jpg')
 
-
-#img = cv.imread('soccer.jpg')
-img = cv.imread('girl_laughing.jpg')
 if img is None:
-   sys.exit('파일을 찾을 수 없습니다.')
-   
-# BrushSize = 5
-# LColor, RColor = (255,0,0),(0,0,255)
+    sys.exit("그딴거 없다.")
+    
+    
+BrushSize=5
+LColor, RColor = (255,0,0), (0,0,255)    
 
-#def painting(event, x,y, flags, param):
-#    if event == cv.EVENT_LBUTTONDOWN:
-#        cv.circle(img, (x,y), BrushSize, LColor, -1)
-#    elif event==cv.EVENT_RBUTTONDOWN:
-#        cv.circle(img, (x,y), BrushSize, RColor, -1)
-#    elif event == cv.EVENT_MOUSEMOVE and flags == cv.EVENT_FLAG_LBUTTON:
-#        cv.circle(img,(x,y), BrushSize, LColor, -1)
-#    elif event == cv.EVENT_MOUSEMOVE and flags == cv.EVENT_FLAG_RBUTTON:
-#        cv.circle(img, (x,y), BrushSize, RColor, -1)
-#        
-#    cv.imshow('Painting', img)
+brush_box_x, brush_box_y, brush_box_w, brush_box_h = 10, 10, 100, 30
 
-
-def draw(event,x,y,flags,param):
-    if event==cv.EVENT_LBUTTONDOWN:
-        cv.rectangle(img,(x,y),(x+200,y+200),(0,0,255),2)
+def painting(event, x, y, flags, param):
+    
+    global BrushSize
+    
+    if (event==cv.EVENT_LBUTTONDOWN or event==cv.EVENT_RBUTTONDOWN) and (brush_box_x<=x<=brush_box_x+brush_box_w and brush_box_y<=y<=brush_box_y+brush_box_h):
+        BrushSize += 1
+    elif event==cv.EVENT_LBUTTONDOWN:
+        cv.circle(img, (x,y), BrushSize,LColor, -1)
     elif event==cv.EVENT_RBUTTONDOWN:
-        cv.rectangle(img,(x,y),(x+100,y+100),(255,0,0),2)
-        
+        cv.circle(img, (x,y), BrushSize, RColor, -1)
+    elif event==cv.EVENT_MOUSEMOVE and flags==cv.EVENT_FLAG_LBUTTON:
+        cv.circle(img, (x,y), BrushSize, LColor, -1)
+    elif event==cv.EVENT_MOUSEMOVE and flags==cv.EVENT_FLAG_RBUTTON:
+        cv.circle(img, (x,y), BrushSize, RColor, -1)
+    
     cv.imshow('Drawing',img)
-
-#gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-#gray_small = cv.resize(gray, dsize=(0,0), fx=0.5, fy=0.5)
-
-#cv.imwrite('sccer_gray.jpg', gray)
-#cv.imwrite('sccer_gray_small.jpg', gray_small)
-
-#cv.imshow('Gray image',gray)
-#cv.imshow('Gray image small', gray_small)
-
-# cv.namedWindow('Painting')
-# cv.imshow('Painting', img)
-#
-# cv.setMouseCallback('Painting', painting)
+        
 
 cv.namedWindow('Drawing')
+cv.rectangle(img, (brush_box_x, brush_box_y), (brush_box_x + brush_box_w, brush_box_y + brush_box_h), (255, 255, 255), -1)
+cv.putText(img, 'Brush Size', (brush_box_x + 5, brush_box_y + 20), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv.LINE_AA)
+
 cv.imshow('Drawing', img)
 
-cv.setMouseCallback('Drawing', draw)
+cv.setMouseCallback('Drawing', painting)
 
 while(True):
-    if cv.waitKey(1) == ord('q'):
+    if cv.waitKey(1)==ord('q'):
         cv.destroyAllWindows()
         break
-
-
-# cv.rectangle(img,(830,30),(1000,200),(0,0,255),2)
-# cv.putText(img,'laugh',(830,24),cv.FONT_HERSHEY_COMPLEX,1,(255,0,0),2)
-# 
-# cv.imshow('Draw',img)
-
-# cv.waitKey()
-# cv.destroyAllWindows()              
-    
-    
-
-
-    
-    
